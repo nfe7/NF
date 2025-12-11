@@ -27,10 +27,11 @@ const PERSONAL_INFO = {
   name: "Nick Feng",
   githubUsername: "nfe7",
   bio: "Passionate developer focusing on clean code, scalable architecture, and building intuitive user experiences.",
-  // INSTRUCTIONS FOR PROFILE PICTURE:
-  // Option 1 (Easiest): Place 'profile.jpg' in the 'public' folder of this website repo, then set this to "/profile.jpg"
-  // Option 2 (External): Upload image to any public URL (or another GitHub repo) and paste the raw link here.
-  profileImage: "Assets/logo.png", 
+  // INSTRUCTIONS:
+  // 1. Create a folder named 'assets' inside the 'public' folder of this repository.
+  // 2. Add your image file named 'profile.jpg' into that 'public/assets' folder.
+  // 3. The path below will then correctly load your image.
+  profileImage: "/assets/profile.jpg", 
   social: {
     linkedin: "https://linkedin.com",
     github: "https://github.com/nfe7"
@@ -69,18 +70,25 @@ const Logo = ({ className = "h-10 w-10" }: { className?: string }) => (
 const ProfileImage = () => (
   <div className="relative inline-block group">
     <div className="w-32 h-32 md:w-40 md:h-40 mx-auto border-2 border-slate-200 bg-slate-50 relative overflow-hidden group-hover:border-cyan-400 transition-colors shadow-inner rounded-full md:rounded-lg">
-      {PERSONAL_INFO.profileImage ? (
-        <>
-          <img src={PERSONAL_INFO.profileImage} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="Profile" />
-          {/* Scanning line effect */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-cyan-400/50 shadow-[0_0_10px_rgba(34,211,238,0.8)] animate-scan opacity-0 group-hover:opacity-100"></div>
-        </>
-      ) : (
-        <div className="flex flex-col items-center justify-center h-full text-slate-300">
-          <User size={48} strokeWidth={1} />
-          <span className="text-[10px] font-mono mt-2 tracking-widest text-slate-400">NO_IMAGE</span>
-        </div>
-      )}
+      <img 
+        src={PERSONAL_INFO.profileImage} 
+        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
+        alt="Profile"
+        onError={(e) => {
+          // Fallback if image not found
+          e.currentTarget.style.display = 'none';
+          e.currentTarget.parentElement?.classList.add('image-error-fallback');
+        }}
+      />
+      {/* Fallback Placeholder (shown via CSS if img fails or is hidden) */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-300 -z-10">
+        <User size={48} strokeWidth={1} />
+        <span className="text-[10px] font-mono mt-2 tracking-widest text-slate-400">NO_DATA</span>
+      </div>
+      
+      {/* Scanning line effect */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-cyan-400/50 shadow-[0_0_10px_rgba(34,211,238,0.8)] animate-scan opacity-0 group-hover:opacity-100 pointer-events-none"></div>
+
       {/* Tech overlays */}
       <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
       <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -118,7 +126,6 @@ function App() {
   const [currentPath, setCurrentPath] = useState<string>('');
   const [repoFiles, setRepoFiles] = useState<GitHubFile[]>([]);
   const [repoReadme, setRepoReadme] = useState<string | null>(null);
-  const [repoCoverImage, setRepoCoverImage] = useState<string | null>(null);
   const [selectedNotebook, setSelectedNotebook] = useState<JupyterNotebook | null>(null);
   const [selectedMarkdown, setSelectedMarkdown] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -146,7 +153,6 @@ function App() {
     setLoading(true);
     setError(null);
     setRepoReadme(null);
-    setRepoCoverImage(null);
     try {
       const files = await fetchRepoContents(repo.owner.login, repo.name, path);
       setRepoFiles(files);
@@ -157,14 +163,6 @@ function App() {
       const readmeFile = files.find(f => f.name.toLowerCase() === 'readme.md');
       if (readmeFile && readmeFile.download_url) {
         fetchRawFile(readmeFile.download_url).then(text => setRepoReadme(text)).catch(console.warn);
-      }
-
-      // Detect Cover Image (preview.png, cover.jpg, etc)
-      const coverFile = files.find(f => 
-        ['preview.png', 'preview.jpg', 'cover.png', 'cover.jpg'].includes(f.name.toLowerCase())
-      );
-      if (coverFile && coverFile.download_url) {
-        setRepoCoverImage(coverFile.download_url);
       }
 
     } catch (err) {
@@ -190,9 +188,6 @@ function App() {
       handleFolderClick(file.path);
       return;
     }
-    // If user clicks the preview image file, just view it as an image or ignore (optional)
-    // For now we treat it as a file download or ignore if we want.
-    // Let's allow downloading/viewing code for standard files.
     if (!file.download_url) return;
 
     setLoading(true);
@@ -429,21 +424,7 @@ function App() {
             <>
               {projectState === 'detail' && (
                 <div className="space-y-6">
-                  {/* PROJECT COVER IMAGE - If detected in repo files */}
-                  {repoCoverImage && (
-                    <div className="relative w-full h-48 md:h-64 rounded-none overflow-hidden border border-slate-200 bg-slate-50 mb-6 group">
-                      <div className="absolute inset-0 bg-tech-grid opacity-50 z-0"></div>
-                      <img 
-                        src={repoCoverImage} 
-                        className="w-full h-full object-cover relative z-10 transition-transform duration-700 group-hover:scale-105" 
-                        alt="Project Cover" 
-                      />
-                      <div className="absolute bottom-0 left-0 bg-white/90 px-3 py-1 text-xs font-mono text-cyan-600 z-20 border-t border-r border-slate-200">
-                        PREVIEW_MODE
-                      </div>
-                    </div>
-                  )}
-
+                  
                   <div className="bg-white border border-slate-200 overflow-hidden">
                     <div className="grid grid-cols-12 gap-4 p-3 bg-slate-50 border-b border-slate-200 text-xs font-mono text-slate-500 uppercase">
                       <div className="col-span-8 pl-4">Filename</div>
