@@ -17,9 +17,9 @@ import { GitHubRepo, GitHubFile, JupyterNotebook } from './types';
 const PERSONAL_INFO = {
   name: "Nick Feng",
   githubUsername: "nfe7",
-  email: "nick.feng@example.com", 
+  email: "nick.feng07@gmail.com", 
   social: {
-    linkedin: "https://linkedin.com",
+    linkedin: "https://www.linkedin.com/in/nick-feng",
     github: "https://github.com/nfe7"
   },
   roles: [
