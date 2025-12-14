@@ -1,20 +1,5 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+I am a graduate in Financial Mathematics with a minor in Computer Science.
 
-# Run and deploy your AI Studio app
+I am passionate about building algorithms, analyzing complex datasets, and developing robust software solutions. My research interests include Machine Learning and Quantitative Finance.
 
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/drive/12DnkXAATpiBC28Pyb2GiBp_Bg5WKFN4F
-
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+I currently divide my time between independent learning and coaching chess part-time. I am looking for the right opportunity to apply my skills in a challenging, fast-paced setting.
