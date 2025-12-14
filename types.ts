@@ -8,11 +8,29 @@ export interface GitHubRepo {
   forks_count: number;
   language: string;
   updated_at: string;
+  created_at: string;
   default_branch: string;
+  fork: boolean;
   owner: {
     login: string;
     avatar_url: string;
   };
+}
+
+export interface GitHubUser {
+  login: string;
+  id: number;
+  avatar_url: string;
+  html_url: string;
+  name: string;
+  company: string;
+  blog: string;
+  location: string;
+  email: string | null;
+  bio: string;
+  public_repos: number;
+  followers: number;
+  following: number;
 }
 
 export interface GitHubFile {
@@ -39,6 +57,7 @@ export interface NotebookCell {
       'text/html'?: string[];
       'image/png'?: string;
       'application/json'?: any;
+      [key: string]: any;
     };
   }>;
   source: string[];

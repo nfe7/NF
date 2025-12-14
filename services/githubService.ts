@@ -1,15 +1,31 @@
-import { GitHubRepo, GitHubFile } from '../types';
+import { GitHubRepo, GitHubFile, GitHubUser } from '../types';
 
 const BASE_URL = 'https://api.github.com';
 
+export const fetchUserProfile = async (username: string): Promise<GitHubUser> => {
+  try {
+    const response = await fetch(`${BASE_URL}/users/${username}`);
+    if (!response.ok) {
+       throw new Error('Failed to fetch user profile');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("GitHub Profile Error:", error);
+    throw error;
+  }
+}
+
 export const fetchUserRepos = async (username: string): Promise<GitHubRepo[]> => {
   try {
-    const response = await fetch(`${BASE_URL}/users/${username}/repos?sort=updated&per_page=12`);
+    // Increased per_page to ensure we get a good list even after filtering
+    const response = await fetch(`${BASE_URL}/users/${username}/repos?sort=updated&per_page=100`);
     if (!response.ok) {
       if (response.status === 404) throw new Error('User not found');
       throw new Error('Failed to fetch repos');
     }
-    return await response.json();
+    const data = await response.json();
+    // Filter out forked repositories to showcase only original work
+    return data.filter((repo: GitHubRepo) => !repo.fork);
   } catch (error) {
     console.error("GitHub API Error:", error);
     throw error;
