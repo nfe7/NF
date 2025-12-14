@@ -8,7 +8,6 @@ export interface GitHubRepo {
   forks_count: number;
   language: string;
   updated_at: string;
-  created_at: string;
   default_branch: string;
   fork: boolean;
   owner: {
